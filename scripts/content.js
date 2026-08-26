@@ -930,15 +930,24 @@ if (marklistButton) {
                 const lastTree =
                     childReactionTrees[childReactionTrees.length - 1];
 
+                const containerRect =
+                    childTrees.getBoundingClientRect();
+
+                const firstRect =
+                    firstTree.getBoundingClientRect();
+
+                const lastRect =
+                    lastTree.getBoundingClientRect();
 
                 const firstCenter =
-                    firstTree.offsetLeft +
-                    firstTree.offsetWidth / 2;
+                    firstRect.left +
+                    firstRect.width / 2 -
+                    containerRect.left;
 
                 const lastCenter =
-                    lastTree.offsetLeft +
-                    lastTree.offsetWidth / 2;
-
+                    lastRect.left +
+                    lastRect.width / 2 -
+                    containerRect.left;
 
                 childReactantBar.style.left =
                     `${firstCenter}px`;
