@@ -270,7 +270,7 @@ if (marklistButton) {
             .tree-child-reactant-bar {
                 position: absolute;
 
-                top: 10px;
+                top: 20px;
 
                 height: 2px;
 
@@ -296,7 +296,7 @@ if (marklistButton) {
                 left: 50%;
 
                 width: 2px;
-                height: 10px;
+                height: 20px;
 
                 background: black;
 
@@ -324,17 +324,14 @@ if (marklistButton) {
             .tree-child-tree::before {
                 content: "";
 
-                position: absolute;
-
-                top: 0;
-                left: 50%;
+                display: block;
 
                 width: 2px;
                 height: 20px;
 
                 background: black;
 
-                transform: translateX(-50%);
+                margin: 10px auto 0;
             }
 
             .tree-child-tree .tree-reactant {
