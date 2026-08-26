@@ -181,25 +181,12 @@ if (marklistButton) {
 
     const treeList = Object.values(trees);
 
-    const networkButton = document.createElement("button");
-    networkButton.textContent = "Network";
 
-    // Copy the classes from the MCM button
-    networkButton.className = marklistButton.className;
+    let networkData = pageData;
 
-    // Put NetworkMCM immediately after Add to marklist
-    marklistButton.insertAdjacentElement(
-        "afterend",
-        networkButton
-    );
+    (async () => {
 
-    networkButton.addEventListener("click", async () => {
-
-        if (document.querySelector("#networkmcm-popup")) {
-            return;
-        }
-
-        // TEST: fetch the first product page
+        console.log("Loading network data...");
 
         for (const tree of treeList) {
 
@@ -235,6 +222,29 @@ if (marklistButton) {
                     );
                 }
             }
+        }
+
+        console.log("Network data loaded!");
+
+    })();
+
+
+    const networkButton = document.createElement("button");
+    networkButton.textContent = "Network";
+
+    // Copy the classes from the MCM button
+    networkButton.className = marklistButton.className;
+
+    // Put NetworkMCM immediately after Add to marklist
+    marklistButton.insertAdjacentElement(
+        "afterend",
+        networkButton
+    );
+
+    networkButton.addEventListener("click", () => {
+
+        if (document.querySelector("#networkmcm-popup")) {
+            return;
         }
 
         const popup = document.createElement("div");
