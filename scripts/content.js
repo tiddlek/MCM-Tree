@@ -555,7 +555,7 @@ if (marklistButton) {
 
         const titleBar = document.createElement("div");
 
-        titleBar.textContent = "Network";
+        titleBar.textContent = `${species} Tree`;
         titleBar.style.fontSize = "18px";
         titleBar.style.fontWeight = "bold";
 
