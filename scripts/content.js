@@ -230,7 +230,7 @@ if (marklistButton) {
 
 
     const networkButton = document.createElement("button");
-    networkButton.textContent = "Network";
+    networkButton.textContent = "Tree";
 
     // Copy the classes from the MCM button
     networkButton.className = marklistButton.className;
