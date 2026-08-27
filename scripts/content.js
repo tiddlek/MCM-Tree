@@ -800,7 +800,7 @@ if (marklistButton) {
             "#5d4037"
         ];
 
-        function renderProductTree(product, parentContainer) {
+        function renderProductTree(product, parentContainer, branchingColor = null) {
 
             /*
             * This is the product itself
@@ -879,6 +879,10 @@ if (marklistButton) {
 
         branchingElement.textContent =
             product.branchingLabel || `(${product.branching})`;
+
+        if (branchingColor) {
+            branchingElement.style.color = branchingColor;
+        }
 
         productElement.appendChild(
             branchingElement
@@ -996,13 +1000,22 @@ if (marklistButton) {
                 * associated with this reactant
                 */
 
-                for (const reaction of tree.reactions) {
+                for (let i = 0; i < tree.reactions.length; i++) {
 
-                    for (const childProduct of reaction) {
+                    const reaction =
+                        tree.reactions[i];
+
+                    const branchingColor =
+                        branchingColors[
+                            i % branchingColors.length
+                        ];
+
+                    for (const product of reaction) {
 
                         renderProductTree(
-                            childProduct,
-                            childContainer
+                            product,
+                            childContainer,
+                            branchingColor
                         );
                     }
                 }
@@ -1159,13 +1172,22 @@ if (marklistButton) {
             * Products for THIS tree
             */
 
-            for (const reaction of tree.reactions) {
+            for (let i = 0; i < tree.reactions.length; i++) {
+
+                const reaction =
+                    tree.reactions[i];
+
+                const branchingColor =
+                    branchingColors[
+                        i % branchingColors.length
+                    ];
 
                 for (const product of reaction) {
 
                     renderProductTree(
                         product,
-                        branchContainer
+                        branchContainer,
+                        branchingColor
                     );
                 }
             }
