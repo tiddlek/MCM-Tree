@@ -83,6 +83,101 @@ function parsePage(page, species) {
             };
         }
 
+        /*
+        * Reaction branching / photolysis
+        */
+
+        const rateElement =
+            reactionGrid.querySelectorAll(".rxn-rate")[i];
+
+        let branching = null;
+        let branchingLabel = null;
+
+        if (rateElement) {
+
+            const mathElement =
+                rateElement.querySelector("math");
+
+            const mathText = mathElement
+                ? mathElement.textContent.trim()
+                : rateElement.textContent.trim();
+
+            console.log(
+                "REACTION MATH:",
+                mathText
+            );
+
+
+            /*
+            * ----------------------------------------------------
+            * 1. Photolysis
+            * ----------------------------------------------------
+            */
+
+            const jMatch =
+                mathText.match(/J\s*<?\s*(\d+)\s*>?/i);
+
+            if (jMatch) {
+
+                branchingLabel =
+                    `(J${jMatch[1]})`;
+
+            } else {
+
+
+                /*
+                * ------------------------------------------------
+                * 2. Branching ratios
+                * ------------------------------------------------
+                */
+
+                const branchingMatches =
+                    [...mathText.matchAll(
+                        /(?:[×*⋅·])\s*(0?\.\d+|\d+(?:\.\d+)?)/g
+                    )];
+
+
+                if (branchingMatches.length > 0) {
+
+                    const value =
+                        parseFloat(
+                            branchingMatches[
+                                branchingMatches.length - 1
+                            ][1]
+                        );
+
+                    if (value >= 0 && value <= 1) {
+
+                        branching = value;
+
+                        branchingLabel =
+                            `(${branching})`;
+                    }
+                }
+
+
+                /*
+                * No explicit branching ratio
+                */
+
+                if (branching === null) {
+
+                    branching = 1;
+
+                    branchingLabel = "(1)";
+                }
+            }
+
+
+            console.log(
+                "BRANCHING RESULT:",
+                branching,
+                branchingLabel
+            );
+        }
+        /*
+        * Products
+        */
 
         const productElements = products[i].querySelectorAll(
             "a.rxn-species-image, span"
@@ -112,9 +207,19 @@ function parsePage(page, species) {
             productList.push({
                 species: name,
                 link: link,
-                image: imageUrl
+                image: imageUrl,
+
+                // Branching ratio
+                branching: branching,
+                branchingLabel: branchingLabel
             });
         });
+
+
+        /*
+        * If this reaction has only one product,
+        * its branching ratio is implicitly 1.
+        */
 
 
         trees[category].reactions.push(productList);
@@ -200,7 +305,11 @@ if (marklistButton) {
 
                     console.log(
                         "Fetching:",
-                        product.species
+                        product.species,
+                        "| current branching:",
+                        product.branching,
+                        "| current label:",
+                        product.branchingLabel
                     );
 
                     const productPage =
@@ -218,7 +327,12 @@ if (marklistButton) {
                     console.log(
                         "Parsed:",
                         product.species,
-                        product
+                        "| branching:",
+                        product.branching,
+                        "| label:",
+                        product.branchingLabel,
+                        "| trees:",
+                        product.trees
                     );
                 }
             }
@@ -674,6 +788,17 @@ if (marklistButton) {
         categoryBar.className = "tree-category-bar";
 
         categoryContainer.appendChild(categoryBar);
+        
+        const branchingColors = [
+            "#c62828",
+            "#1565c0",
+            "#2e7d32",
+            "#6a1b9a",
+            "#ef6c00",
+            "#00838f",
+            "#ad1457",
+            "#5d4037"
+        ];
 
         function renderProductTree(product, parentContainer) {
 
@@ -713,36 +838,51 @@ if (marklistButton) {
 
             if (product.link) {
 
-                const productName =
-                    document.createElement("a");
+            const productName =
+                document.createElement("a");
 
-                productName.textContent =
-                    product.species;
+            productName.textContent =
+                product.species;
 
-                productName.href =
-                    new URL(
-                        product.link,
-                        "https://www.mcm.york.ac.uk"
-                    ).href;
+            productName.href =
+                new URL(
+                    product.link,
+                    "https://www.mcm.york.ac.uk"
+                ).href;
 
-                productName.target = "_blank";
+            productName.target = "_blank";
 
-                productElement.appendChild(
-                    productName
-                );
+            productElement.appendChild(
+                productName
+            );
 
-            } else {
+        } else {
 
-                const productName =
-                    document.createElement("div");
+            const productName =
+                document.createElement("div");
 
-                productName.textContent =
-                    product.species;
+            productName.textContent =
+                product.species;
 
-                productElement.appendChild(
-                    productName
-                );
-            }
+            productElement.appendChild(
+                productName
+            );
+        }
+
+
+        /*
+        * Branching ratio
+        */
+
+        const branchingElement =
+            document.createElement("div");
+
+        branchingElement.textContent =
+            product.branchingLabel || `(${product.branching})`;
+
+        productElement.appendChild(
+            branchingElement
+        );
 
 
             branch.appendChild(
