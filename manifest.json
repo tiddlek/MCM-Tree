@@ -22,6 +22,10 @@
             "48": "images/MCM_Tree-48.png"
         }
     },
+
+    "host_permissions": [
+        "https://www.mcm.york.ac.uk/*"
+    ],
     
     "content_scripts": [{
         "js": ["scripts/content.js"],
@@ -29,5 +33,4 @@
             "https://www.mcm.york.ac.uk/MCM/species/*"
         ]
     }]
-
 }
