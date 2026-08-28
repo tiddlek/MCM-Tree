@@ -242,23 +242,31 @@ async function fetchPage(url) {
 
     const absoluteUrl = new URL(
         url,
-        "https://www.mcm.york.ac.uk"
+        window.location.origin
     ).href;
 
-    const response = await fetch(absoluteUrl);
+    console.log("Requesting page:", absoluteUrl);
 
-    if (!response.ok) {
+    const result = await chrome.runtime.sendMessage({
+        type: "fetchPage",
+        url: absoluteUrl
+    });
+
+    if (!result.success) {
         throw new Error(
-            `Failed to fetch page: ${response.status}`
+            `Failed to fetch ${absoluteUrl}: ${result.error}`
         );
     }
 
-    const html = await response.text();
+    console.log(
+        "Received page:",
+        absoluteUrl
+    );
 
     const parser = new DOMParser();
 
     const page = parser.parseFromString(
-        html,
+        result.html,
         "text/html"
     );
 
