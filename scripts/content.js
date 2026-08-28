@@ -1,3 +1,4 @@
+console.log("MCM TREE CONTENT SCRIPT LOADED");
 function parsePage(page, species) {
 
     const trees = {};

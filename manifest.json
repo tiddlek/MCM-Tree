@@ -24,13 +24,15 @@
     },
 
     "host_permissions": [
-        "https://www.mcm.york.ac.uk/*"
+        "https://www.mcm.york.ac.uk/*",
+        "https://mcm.york.ac.uk/*"
     ],
-    
+
     "content_scripts": [{
         "js": ["scripts/content.js"],
         "matches": [
-            "https://www.mcm.york.ac.uk/MCM/species/*"
+            "https://www.mcm.york.ac.uk/MCM/species/*",
+            "https://mcm.york.ac.uk/MCM/species/*"
         ]
     }]
 }
