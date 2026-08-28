@@ -60,12 +60,59 @@ function parsePage(page, species) {
 
         let category;
 
-        if (
+        /*
+        * Get the reaction rate text.
+        *
+        * Important:
+        * We cannot simply use rateText.includes("RO2")
+        * because rate constants such as KRO2NO, KRO2NO3,
+        * and KRO2HO2 contain the string "RO2".
+        */
+        const rateElement =
+            reactionGrid.querySelectorAll(".rxn-rate")[i];
+
+        const rateText =
+            rateElement
+                ? rateElement.textContent.trim()
+                : "";
+
+
+        /*
+        * Check whether RO2 is an actual reactant.
+        *
+        * We want to match:
+        *
+        *     ... * RO2
+        *
+        * but NOT:
+        *
+        *     KRO2NO
+        *     KRO2NO3
+        *     KRO2HO2
+        */
+        const hasRO2 =
+            /(?:^|[^A-Z0-9])RO2(?:$|[^A-Z0-9])/i.test(rateText);
+
+
+        /*
+        * Categorize the reaction.
+        *
+        * Priority:
+        *
+        * 1. Explicit RO2 reaction
+        * 2. Single-species decomposition (D)
+        * 3. Other reactant (NO, NO3, HO2, etc.)
+        */
+        if (hasRO2) {
+
+            category = "RO2";
+
+        } else if (
             reactantList.length === 1 &&
             reactantList[0] === species
         ) {
 
-            category = "D";
+            category = "U";
 
         } else {
 
@@ -73,7 +120,6 @@ function parsePage(page, species) {
                 name => name !== species
             );
         }
-
 
         if (!trees[category]) {
 
@@ -87,9 +133,6 @@ function parsePage(page, species) {
         /*
         * Reaction branching / photolysis
         */
-
-        const rateElement =
-            reactionGrid.querySelectorAll(".rxn-rate")[i];
 
         let branching = null;
         let branchingLabel = null;
@@ -399,6 +442,24 @@ if (marklistButton) {
         const style = document.createElement("style");
 
         style.textContent = `
+
+            .tree-legend {
+                position: absolute;
+
+                right: 20px;
+                bottom: 20px;
+
+                z-index: 100;
+
+                font-size: 18px;
+
+                background: white;
+
+                padding: 5px 8px;
+
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
 
             .tree-child-reactant-bar {
                 position: absolute;
@@ -714,6 +775,15 @@ if (marklistButton) {
         treeViewport.className = "tree-viewport";
 
         shadow.appendChild(treeViewport);
+
+        const legend = document.createElement("div");
+
+        legend.className = "tree-legend";
+
+        legend.textContent =
+            "U - Unimolecular Reactions";
+
+        shadow.appendChild(legend);
 
 
         const zoomContainer = document.createElement("div");
